@@ -1,0 +1,12 @@
+
+k 2: Check Ubuntu versions
+ansible -i inventory.ini linux_servers -m command -a "cat /etc/os-release" --ask-pass
+
+This retrieves operating system information from both VMs.
+Task 3: Check available memory
+ansible -i inventory.ini linux_servers -m command -a "free -h" --ask-pass
+
+Task 4: Check disk usage
+ansible -i inventory.ini linux_servers -m command -a "df -h" --ask-pass
+
+These commands demonstrate a key benefit of Ansible: you can execute one command on multiple servers without logging into each server manually.

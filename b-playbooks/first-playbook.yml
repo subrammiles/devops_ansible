@@ -1,0 +1,20 @@
+---
+- name: My First DevOps Playbook
+  hosts: linux_servers
+  become: true
+  gather_facts: true
+
+  tasks:
+    - name: Display a welcome message
+      ansible.builtin.debug:
+        msg: "Hello from Ansible!"
+
+    - name: Display each server hostname
+      ansible.builtin.debug:
+        msg: "Server hostname is {{ ansible_hostname }}"
+
+    - name: Ensure tree is installed
+      ansible.builtin.apt:
+        name: tree
+        state: present
+        update_cache: true
