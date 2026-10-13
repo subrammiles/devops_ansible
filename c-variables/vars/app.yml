@@ -1,0 +1,4 @@
+---
+app_name: demo-app
+app_dir: /opt/demo-app
+app_owner: subbu

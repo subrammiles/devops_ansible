@@ -1,0 +1,14 @@
+---
+- name: Configure all servers
+  hosts: linux_servers
+  become: true
+  roles:
+    - common
+
+- name: Configure web servers
+  hosts: linux_servers
+  become: true
+  roles:
+    - role: webserver
+      vars:
+        site_title: "Hello from the webserver role"

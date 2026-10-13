@@ -1,0 +1,52 @@
+---
+- name: Working with variables
+  hosts: linux_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    greeting: "Hello"
+    favourite_tools:
+      - ansible
+      - git
+      - docker
+
+  vars_files:
+    - vars/app.yml
+
+  tasks:
+    - name: Use a simple variable
+      ansible.builtin.debug:
+        msg: "{{ greeting }} from {{ inventory_hostname }}"
+
+    - name: Use a list variable
+      ansible.builtin.debug:
+        msg: "First tool is {{ favourite_tools[0] }}, total tools: {{ favourite_tools | length }}"
+
+    - name: Use facts gathered by Ansible
+      ansible.builtin.debug:
+        msg: "{{ ansible_hostname }} runs {{ ansible_distribution }} {{ ansible_distribution_version }} with {{ ansible_memtotal_mb }} MB RAM"
+
+    - name: Create the app directory from vars file
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_owner }}"
+        mode: "0755"
+
+    - name: Run a command and save its output
+      ansible.builtin.command: uptime -p
+      register: uptime_result
+      changed_when: false
+
+    - name: Show the saved output
+      ansible.builtin.debug:
+        msg: "{{ app_name }} host has been {{ uptime_result.stdout }}"
+
+    - name: Create a variable at runtime
+      ansible.builtin.set_fact:
+        app_url: "http://{{ ansible_hostname }}/{{ app_name }}"
+
+    - name: Show the runtime variable
+      ansible.builtin.debug:
+        var: app_url

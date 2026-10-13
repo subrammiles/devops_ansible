@@ -1,0 +1,19 @@
+---
+- name: Install nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Deploy the home page
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: "0644"
+  notify: Reload nginx
+
+- name: Make sure nginx is running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

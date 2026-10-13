@@ -1,0 +1,7 @@
+---
+common_packages:
+  - tree
+  - htop
+  - curl
+  - vim
+timezone: Asia/Kolkata

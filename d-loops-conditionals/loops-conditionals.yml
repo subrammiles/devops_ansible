@@ -1,0 +1,58 @@
+---
+- name: Loops and conditionals
+  hosts: linux_servers
+  become: true
+  gather_facts: true
+
+  vars:
+    packages:
+      - tree
+      - htop
+      - curl
+    users:
+      - { name: alice, shell: /bin/bash }
+      - { name: bob, shell: /bin/sh }
+
+  tasks:
+    - name: Install several packages in one task
+      ansible.builtin.apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: true
+      when: ansible_os_family == "Debian"
+
+    - name: Create users with a loop
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        state: present
+      loop: "{{ users }}"
+
+    - name: Create practice directories
+      ansible.builtin.file:
+        path: "/tmp/ansible-practice/{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - logs
+        - backups
+        - scripts
+
+    - name: Run only on node1
+      ansible.builtin.debug:
+        msg: "This task runs only on node1"
+      when: inventory_hostname == "node1"
+
+    - name: Warn when memory is low
+      ansible.builtin.debug:
+        msg: "{{ ansible_hostname }} has less than 2 GB RAM ({{ ansible_memtotal_mb }} MB)"
+      when: ansible_memtotal_mb < 2048
+
+    - name: Check if a file exists
+      ansible.builtin.stat:
+        path: /etc/nginx/nginx.conf
+      register: nginx_conf
+
+    - name: Report nginx status
+      ansible.builtin.debug:
+        msg: "nginx config {{ 'found' if nginx_conf.stat.exists else 'not found' }}"
